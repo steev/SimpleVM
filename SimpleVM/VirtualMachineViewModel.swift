@@ -17,7 +17,7 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     @Published var initialRamdiskURL: URL?
     @Published var bootableImageURL: URL?
     @Published var extraImageURL: URL?
-
+    @Published var commandLine: String? = "root=/dev/vda1 console=hvc0"
     @Published var state: VZVirtualMachine.State?
     
     private lazy var consoleWindow: NSWindow = {
@@ -67,7 +67,8 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
     func start() {
         guard let kernelURL = kernelURL,
               let initialRamdiskURL = initialRamdiskURL,
-              let bootableImageURL = bootableImageURL else {
+              let bootableImageURL = bootableImageURL,
+              let commandLine = commandLine else {
             return
         }
         
@@ -76,8 +77,8 @@ class VirtualMachineViewModel: NSObject, ObservableObject, VZVirtualMachineDeleg
         
         let bootloader = VZLinuxBootLoader(kernelURL: kernelURL)
         bootloader.initialRamdiskURL = initialRamdiskURL
-        bootloader.commandLine = "console=hvc0"
-
+        bootloader.commandLine = commandLine
+        
         let serial = VZVirtioConsoleDeviceSerialPortConfiguration()
         
         serial.attachment = VZFileHandleSerialPortAttachment(

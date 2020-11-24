@@ -12,6 +12,14 @@ struct ContentView: View {
     
     @StateObject var viewModel = VirtualMachineViewModel()
     
+    var commandLine: Binding<String> {
+        .init(get: {
+            viewModel.commandLine ?? ""
+        }, set: {
+            viewModel.commandLine = $0
+        })
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("vmlinuz: \(viewModel.kernelURL?.lastPathComponent ?? "(Drag to here)")")
@@ -42,6 +50,9 @@ struct ContentView: View {
                     return true
                 }
 
+            Text("Command Line:")
+            TextField("Command Line", text: commandLine)
+            
             Spacer()
             
             HStack {
